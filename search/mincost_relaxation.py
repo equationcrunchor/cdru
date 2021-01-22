@@ -1,6 +1,7 @@
 __author__ = 'yupeng'
 
-from pulp import solvers, LpProblem, LpMinimize, LpVariable, value
+import pulp
+from pulp import LpProblem, LpMinimize, LpVariable, value
 from search.temporal_relaxation import TemporalRelaxation
 from temporal_network.tpnu import FeasibilityType
 
@@ -140,7 +141,7 @@ class MinCostRelaxation():
             # Solve the problem
             try:
                 import gurobipy
-                status = prob.solve(solvers.GUROBI(mip=False,msg=False))
+                status = prob.solve(pulp.GUROBI(mip=False,msg=False))
             except ImportError:
                 # pass # Gurobi doesn't exist, use default Pulp solver.
                 status = prob.solve()

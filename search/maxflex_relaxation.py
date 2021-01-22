@@ -1,6 +1,7 @@
 __author__ = 'yupeng'
 
-from pulp import solvers, LpProblem, LpVariable, value, LpMaximize
+import pulp
+from pulp import LpProblem, LpVariable, value, LpMaximize
 from search.temporal_relaxation import TemporalRelaxation
 
 class MaxFlexRelaxation():
@@ -104,7 +105,7 @@ class MaxFlexRelaxation():
             # Solve the problem
             try:
                 import gurobipy
-                status = prob.solve(solvers.GUROBI(mip=False,msg=False))
+                status = prob.solve(pulp.GUROBI(mip=False,msg=False))
             except ImportError:
                 pass # Gurobi doesn't exist, use default Pulp solver.
                 status = prob.solve()
@@ -147,4 +148,3 @@ class MaxFlexRelaxation():
                 return relaxations,max_flex_value
 
         return None,0
-

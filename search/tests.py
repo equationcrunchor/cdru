@@ -1,8 +1,11 @@
 
 __author__ = 'yupeng'
 
-import unittest
+import sys, os
 from os.path import join, dirname
+sys.path.insert(0, join(dirname(__file__), '..'))
+
+import unittest
 from math import fabs
 from tpn import Tpn
 from temporal_network.tpnu import Tpnu, ChanceConstrained
@@ -124,7 +127,7 @@ class SearchTests(unittest.TestCase):
             raise Exception("Input file " + path + " is neither a CCTP nor a TPN")
 
         return tpnu
-            
+
     def test_cdru_basic(self):
         f_type = FeasibilityType.CONSISTENCY
         o_type = ObjectiveType.MIN_COST
@@ -157,7 +160,7 @@ class SearchTests(unittest.TestCase):
         self.assert_cdru_result('bus-2.cctp', f_type, o_type, c_type, True)
         self.assert_cdru_result('bus-3.cctp', f_type, o_type, c_type, False)
         self.assert_cdru_result('bus-4.cctp', f_type, o_type, c_type, True)
-#  
+#
     def test_cctp_zipcar(self):
         f_type = FeasibilityType.DYNAMIC_CONTROLLABILITY
         o_type = ObjectiveType.MIN_COST

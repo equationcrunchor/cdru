@@ -2,6 +2,16 @@
 
 This is a python implementation of the Conflict-directed Relaxation with Uncertainty algorithm for solving over-constrained temporal problems. It supports the resolution of many commonly used temporal formulations, including STN, STNU, ccp-STP and their conditional variants. All these formulations can be loaded into a TPNU object.
 
+## Installation
+
+The following installation guide has been tested with anaconda environment python=3.7.
+
+1. `pip install -r requirements.txt`
+
+2. `pip install -r requirements-gurobi.txt`
+
+3. Go to `./search/`, and test that the testcases work by `python -m unittest tests.py`.
+
 ## Quickstart
 
 There are many examples you may refer to in tests.py inside the search folder. Here is a simple example of using CDRU to solve an over-constrained TPNU.
