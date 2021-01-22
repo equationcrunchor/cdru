@@ -10,7 +10,7 @@ The following installation guide has been tested with anaconda environment pytho
 
 2. `pip install -r requirements-gurobi.txt`
 
-3. Go to `./search/`, and test that the testcases work by `python -m unittest tests.py`.
+3. Go to `./search/`, and test that the testcases work by `python -m unittest tests.py`. For a manually specified TPNU example with relaxation, try running `python test_example.py`
 
 ## Quickstart
 
@@ -24,13 +24,13 @@ There are many examples you may refer to in tests.py inside the search folder. H
 
 2. Construct the search problem: `search_problem = SearchProblem(tpnu,f_type,o_type,c_type)`. The constructor needs the tpnu object and three parameters:
 
-    * `f_type`: the feasibility model used by CDRU. The three options are: `FeasibilityType.CONSISTENCY`, `FeasibilityType.STRONG_CONTROLLABILITY`, and `FeasibilityType.DYNAMIC_CONTROLLABILITY`. 
+    * `f_type`: the feasibility model used by CDRU. The three options are: `FeasibilityType.CONSISTENCY`, `FeasibilityType.STRONG_CONTROLLABILITY`, and `FeasibilityType.DYNAMIC_CONTROLLABILITY`.
 
-    * `o_type`: the objective function used by CDRU. The two options are: `ObjectiveType.MIN_COST` and `ObjectiveType.MAX_FLEX_UNCERTAINTY`. Currently, the second option is only used for some RCPSP problems, which are feasible and require CDRU to find the maximum range that can be built into the uncertain durations while maintaining Strong/Dynamic controllability. The default LP solver is PuLP. Gurobi is also supported if you have it installed. 
- 
+    * `o_type`: the objective function used by CDRU. The two options are: `ObjectiveType.MIN_COST` and `ObjectiveType.MAX_FLEX_UNCERTAINTY`. Currently, the second option is only used for some RCPSP problems, which are feasible and require CDRU to find the maximum range that can be built into the uncertain durations while maintaining Strong/Dynamic controllability. The default LP solver is PuLP. Gurobi is also supported if you have it installed.
+
     * `c_type`: the switch for chance constraint. The two options are: `ChanceConstrained.OFF` and `ChanceConstrained.ON`. Chance constrained relaxation requires the installation of SNOPT (version 7.2) and its python interface, pysnopt (https://github.com/b45ch1/pysnopt).
- 
-3. Search for solutions: `solution = search_problem.next_solution()`. The return solution is a `Candidate` object that contains assignments to discrete variables and temporal relaxations (if applicable). You can use `solution.pretty_print()` to print the candidate object. If no solution (or no more solution) can befound, the `next_solution()` function will return `None`. 
+
+3. Search for solutions: `solution = search_problem.next_solution()`. The return solution is a `Candidate` object that contains assignments to discrete variables and temporal relaxations (if applicable). You can use `solution.pretty_print()` to print the candidate object. If no solution (or no more solution) can befound, the `next_solution()` function will return `None`.
 
 
 ## Examples
@@ -40,7 +40,7 @@ There are quite a few test problems in the `examples` folder. They come in a few
 1. `AUV-*.cctp` files are CCTP problems generated from autonomous underwater vehicle mission scenarios. You may solve it with all three feasibility types, the minimal cost objective, and both chance constraint ON and OFF.
 
 2. `PSP1.SCH*.cctp` files are generated from partial ordered activities for Resource-Constrained Project Scheduling Problems. You may solve it with the dynamic controllability model, the maximum flexibility objective, and chance constraint OFF.
- 
+
 3. `Route_Red_Headway_*` files are generated from Boston's Red Line subway schedule. You may solve it with the dynamic controllability model, the minimal cost objective, and chance constraint OFF.
 
 
