@@ -11,4 +11,16 @@ class Assignment(object):
         return self.utility > other.utility
 
     def pretty_print(self):
-        print(self.decision_variable.name + " <- "+ self.value +" ("+str(self.utility)+")")
+        print(self)
+
+    def __eq__(self, other):
+        return self.decision_variable == other.decision_variable and self.value == other.value
+
+    def __hash__(self):
+        return hash((self.decision_variable, self.value))
+
+    def __str__(self):
+        return self.decision_variable.name + " <- "+ self.value +" ("+str(self.utility)+")"
+
+    def __repr__(self):
+        return str(self)

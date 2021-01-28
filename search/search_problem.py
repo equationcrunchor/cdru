@@ -1,5 +1,7 @@
 __author__ = 'yupeng'
 
+from collections import defaultdict
+
 from controllability.strong_controllability import StrongControllability
 from controllability.temporal_consistency import TemporalConsistency
 
@@ -22,7 +24,10 @@ class SearchProblem(object):
         self.objective_type = o_type
         self.chance_constrained = c_type
 
-        self.candidates_dequeued = 0;
+        self.forced_assignments = {}
+        self.disallowed_assignments = defaultdict(set)
+
+        self.candidates_dequeued = 0
 
         if self.objective_type == ObjectiveType.MAX_FLEX_UNCERTAINTY:
             # Preprocess the uncontrollable durations in the tpnu
@@ -89,7 +94,7 @@ class SearchProblem(object):
                 guard_variable.optimal_utility = guard_assignment.utility + variable.optimal_utility
                 self.update_variable_heuristics(guard_variable)
 
-    def next_solution(self):
+    def next_solution(self, return_conflicts=False):
 
         # if the search queue is empty
         # no more solution can be found
@@ -148,9 +153,15 @@ class SearchProblem(object):
                                         maxFlex = constraint.get_upper_bound() - constraint.get_lower_bound()
 
                             candidate.utility = maxFlex
-                        return candidate
+                        if return_conflicts:
+                            return candidate, self.known_conflicts.copy()
+                        else:
+                            return candidate
 
-        return None
+        if return_conflicts:
+            return None, self.known_conflicts.copy()
+        else:
+            return None
 
     def check_conflict_resolution(self,candidate):
 
@@ -170,8 +181,8 @@ class SearchProblem(object):
 
                     if not resolved:
                         # first, find the assignments that share the same decision variable
-                        if candidate_assignment.decision_variable is conflict_assignment.decision_variable:
-                            if candidate_assignment is not conflict_assignment:
+                        if candidate_assignment.decision_variable == conflict_assignment.decision_variable:
+                            if candidate_assignment != conflict_assignment:
                                 # next, if they are different, meaning that this conflict is resolved
                                 resolved = True
 
@@ -209,7 +220,12 @@ class SearchProblem(object):
 
             # take the negation of this conflict
             for alternative_assignment in conflict_assignment.decision_variable.domain:
-                if not alternative_assignment is conflict_assignment:
+                var_id = alternative_assignment.decision_variable.id
+                if var_id in self.forced_assignments and self.forced_assignments[var_id] != alternative_assignment.value:
+                    continue
+                if var_id in self.disallowed_assignments and alternative_assignment.value in self.disallowed_assignments[var_id]:
+                    continue
+                if alternative_assignment != conflict_assignment:
                     # create a new candidate
 
                     # print("Extending candidate ")
@@ -313,6 +329,11 @@ class SearchProblem(object):
         # expand the candidate using the
         # assignments to the variable
         for domain_assignment in variable.domain:
+            var_id = domain_assignment.decision_variable.id
+            if var_id in self.forced_assignments and self.forced_assignments[var_id] != domain_assignment.value:
+                continue
+            if var_id in self.disallowed_assignments and domain_assignment.value in self.disallowed_assignments[var_id]:
+                continue
 
             # create a new candidate
             new_candidate = self.create_child_candidate_from_assignment(candidate,domain_assignment)
@@ -449,5 +470,17 @@ class SearchProblem(object):
     def pretty_print(self):
         print("Search Problem")
 
-        print("Queue Size# "+ str(self.queue.qsize()))
-        print("Known Conflict# "+ str(len(self.known_conflicts)))
+        print("Queue Size# " + str(self.queue.qsize()))
+        print("Known Conflict# " + str(len(self.known_conflicts)))
+
+    def force_assignment(self, var_name, value):
+        for id, variable in self.tpnu.decision_variables.items():
+            if variable.name == var_name:
+                self.forced_assignments[variable.id] = value
+                for guard in variable.guards:
+                    self.forced_assignments[guard.decision_variable.id] = guard.value
+
+    def disallow_variable_assignment(self, var_name, value):
+        for id, variable in self.tpnu.decision_variables.items():
+            if variable.name == var_name:
+                self.disallowed_assignments[variable.id].add(value)

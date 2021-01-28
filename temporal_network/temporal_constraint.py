@@ -1,6 +1,5 @@
 __author__ = 'yupeng'
 
-
 class TemporalConstraint(object):
 
     def __init__(self, id, name, fro, to, lower_bound, upper_bound):
@@ -49,3 +48,15 @@ class TemporalConstraint(object):
         expression_str.append('(%s:%s->%s)[%.4f,%.4f]' % (self.name, self.fro, self.to, self.lower_bound, self.upper_bound))
 
         print(''.join(expression_str))
+
+    def __eq__(self, o):
+        return self.id == o.id
+
+    def __hash__(self):
+        return hash(self.id)
+
+    def __str__(self):
+        expression_str = []
+
+        expression_str.append('(%s:%s->%s)[%.4f,%.4f]' % (self.name, self.fro, self.to, self.lower_bound, self.upper_bound))
+        return ''.join(expression_str)

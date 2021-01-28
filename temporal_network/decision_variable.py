@@ -1,5 +1,8 @@
 __author__ = 'yupeng'
 
+import copy
+from .assignment import Assignment
+
 class DecisionVariable(object):
 
     def __init__(self, id, name):
@@ -18,3 +21,19 @@ class DecisionVariable(object):
 
     def add_guard(self,guard):
         self.guards.add(guard)
+
+    def __eq__(self, other):
+        return self.id == other.id
+
+    def __hash__(self):
+        return hash(self.id)
+
+    def __deepcopy__(self, memo):
+        other = DecisionVariable(self.id, self.name)
+        memo[id(self)] = other
+        other.domain = set()
+        for assignment in self.domain:
+            new_assignment = Assignment(other, assignment.value, assignment.utility)
+            other.domain.add(new_assignment)
+        other.guards = copy.deepcopy(self.guards, memo)
+        return other

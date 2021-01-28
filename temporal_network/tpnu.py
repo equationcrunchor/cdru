@@ -80,6 +80,7 @@ class Tpnu(object):
         # parse the event
         event_ids = set()
         tpnu.node_id_to_name = {}
+        # tpnu.node_name_to_number = {}
         tpnu.node_number_to_id = {}
         tpnu.node_id_to_number = {}
 
@@ -92,6 +93,7 @@ class Tpnu(object):
             next_number = len(tpnu.node_number_to_id) + 1
             tpnu.node_number_to_id[next_number] = eid
             tpnu.node_id_to_number[eid] = next_number
+            # tpnu.node_name_to_number[tpnu.node_id_to_name[eid]] = next_number
 
         tpnu.num_nodes = len(tpnu.node_number_to_id)
 
